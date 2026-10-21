@@ -134,9 +134,12 @@ class AppPackageMakerDeb extends AppPackageMaker {
     ]);
     await normalizeLinuxPermissions(packagingDirectory.path);
 
+    // dpkg-deb on Ubuntu 21.10+ defaults to zstd, which the dpkg of Debian
+    // derivatives such as UOS cannot unpack.
     ProcessResult processResult = await $('dpkg-deb', [
       '--build',
       '--root-owner-group',
+      '-Zxz',
       packagingDirectory.path,
       makeConfig.outputFile.path,
     ]);
